@@ -1,5 +1,7 @@
 package com.kabodpixel.pdfgenerate.controller;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 import org.springframework.http.HttpHeaders;
@@ -23,11 +25,28 @@ public class PdfController {
 
     @PostMapping(value = "/generate", produces = MediaType.APPLICATION_PDF_VALUE)
     public ResponseEntity<byte[]> generatePdf(@RequestBody PdfData pdfData) {
+        System.out.println(pdfData);
+           // Définir le format de la date
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        // Convertir la chaîne en LocalDateTime
+        String dateNaissanceString= pdfData.getDateNaissance();
+        String dateDescesString= pdfData.getDateDesces();
+        LocalDateTime dateTimeNaissace = LocalDateTime.parse(dateNaissanceString, formatter);
+        LocalDateTime dateTimeDescess = LocalDateTime.parse(dateDescesString, formatter);
+
+
+       
         // Convertir l'objet PdfData en modèle pour Thymeleaf
         Map<String, Object> model = Map.of(
-                "name", pdfData.getNom(),
-                "amount", pdfData.getAmount(),
-                "date", pdfData.getDate()
+                "name", pdfData.getNomDefunt(),
+                "funeraille", pdfData.getDateFuneraille(),
+                "photo", "https://www.parentst-hilaire.com/images/photos_defunts/2024/photo_site_Rosaire_Odesse.jpg"/* pdfData.getPhotoDefunt() */,
+                "description", pdfData.getDescription(),
+                "paroisse", pdfData.getParoisse(),
+                "datedesces", dateTimeDescess.getYear(),
+                "datenaissance", dateTimeNaissace.getYear(),
+                "audela","https://www.parentst-hilaire.com/images/BandeauOdela.jpg"
+
         );
 
         // Spécifiez le nom du template Thymeleaf
